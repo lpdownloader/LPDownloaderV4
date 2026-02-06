@@ -13,7 +13,7 @@
 --blue:#3b82f6;
 --green:#22c55e;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 html, body{
 background-color:#000 !important;
 color:#fff !important;
@@ -25,23 +25,41 @@ display:flex;
 justify-content:center;
 }
 
-/* OPENING */
+/* ===== LOADING SCREEN ===== */
 #opening{
 position:fixed;inset:0;
 background:#000;
 display:flex;flex-direction:column;align-items:center;justify-content:center;
 z-index:9999;
+text-align:center;
 }
 #opening video{
-width:80%;max-width:320px;
-aspect-ratio:16/9;
+width:70%;
+max-width:320px;
 border-radius:16px;
+margin-bottom:20px;
 }
 #opening span{
-margin-top:14px;font-size:12px;color:#aaa;
+display:block;
+margin-top:5px;
+font-size:16px;
+color:#fff;
+}
+.spinner{
+width:50px;
+height:50px;
+border:6px solid #444;
+border-top:6px solid #ff0000;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-top:10px;
+}
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
 }
 
-/* APP */
+/* ===== APP ===== */
 .container{width:100%;max-width:420px;padding:20px;display:none;}
 
 /* HEADER */
@@ -50,7 +68,7 @@ display:flex;justify-content:space-between;align-items:center;margin-bottom:18px
 }
 .menu,.update{font-size:22px;cursor:pointer}
 
-/* MODAL DESKRIPSI */
+/* MODAL */
 .modal{
 position:fixed;
 top:50%; left:50%;
@@ -100,23 +118,31 @@ button:disabled{opacity:.6}
 /* RESULT */
 #result{display:none;text-align:center;margin-top:15px;}
 #result a{display:block;margin-top:10px;color:var(--blue);font-weight:bold;text-decoration:none;}
+.ready{font-size:12px;color:var(--green);}
+.tip{font-size:11px;color:#888;}
 
 /* STATS */
 .grid{margin-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .stat{background:var(--card);border-radius:15px;padding:15px;}
 .label{font-size:12px;color:var(--gray)}
 .val{font-size:18px;font-weight:bold;margin-top:5px}
+.blue{color:var(--blue)}
+.green{color:var(--green)}
 </style>
 </head>
 <body>
 
-<!-- OPENING -->
+<!-- LOADING -->
 <div id="opening">
 <video autoplay muted loop>
 <source src="https://ar-hosting.pages.dev/1770287179319.mp4" type="video/mp4">
 </video>
 <span>LP DOWNLOADER V4</span>
 <span>WAIT LOADING</span>
+<div class="spinner"></div>
+<h3>DEVELOPER:<span>
+@Vitz<span>
+@Ady<span>
 </div>
 
 <div class="container" id="app">
@@ -131,7 +157,7 @@ button:disabled{opacity:.6}
 <div class="owner">
 <div>
 <div style="font-size:18px;font-weight:bold">LP DOWNLOADER</div>
-<div class="badge">APLIKASI</div>
+<div class="badge">WEBSITE</div>
 </div>
 <div style="text-align:right">
 <div style="font-size:10px;opacity:.7">EXPIRED</div>
@@ -139,7 +165,7 @@ button:disabled{opacity:.6}
 </div>
 </div>
 
-<!-- BOX INPUT -->
+<!-- INPUT BOX -->
 <div class="box">
 <label style="font-size:12px;color:#888">LINK TIKTOK</label>
 <input id="url" placeholder="Tempel link TikTok...">
@@ -162,27 +188,27 @@ button:disabled{opacity:.6}
 </div>
 
 <div id="result">
-<p style="font-size:12px;color:var(--green)">Siap diunduh</p>
+<p class="ready">Siap diunduh</p>
 <a id="dl">DOWNLOAD SEKARANG</a>
-<p style="font-size:11px;color:#888">Tip Android: klik / tahan untuk simpan</p>
+<p class="tip">Tip Android: klik / tahan untuk simpan</p>
 </div>
 </div>
 
 <!-- STATS -->
 <div class="grid">
 <div class="stat">
-<span class="label">Status</span>
-<span class="val" style="color:var(--blue)">API Active</span>
+<span class="label">Status:</span>
+<span class="val blue">API Active</span>
 </div>
 <div class="stat">
-<span class="label">Server</span>
-<span class="val" style="color:var(--green)">Normal</span>
+<span class="label">Server:</span>
+<span class="val green">Normal</span>
 </div>
 </div>
 
 </div>
 
-<!-- MODAL DESKRIPSI -->
+<!-- MODAL -->
 <div class="modal" id="descModal">
 <span class="modal-close" onclick="closeModal('descModal')">✖</span>
 <h3>Tentang Web</h3>
@@ -207,7 +233,7 @@ button:disabled{opacity:.6}
 </div>
 
 <script>
-/* OPENING 7 detik */
+/* LOADING 3 detik */
 setTimeout(()=>{opening.style.display="none";app.style.display="block";},10000);
 
 /* MODAL */
@@ -219,7 +245,7 @@ function closeModal(id){
   document.getElementById(id).style.display='none';
 }
 
-/* DOWNLOAD VIDEO / MP3 */
+/* DOWNLOAD VIDEO */
 async function getVideo(){
 const url=urlInput.value.trim();
 const format=formatSelect.value;
@@ -242,11 +268,11 @@ if(format==="mp4"){video.src=finalLink;preview.style.display="block";}
 else{preview.style.display="none";}
 title.innerText=j.data.title || "TikTok Video";
 
-/* RESULT - langsung ke Chrome */
+/* RESULT - buka di Chrome */
 dl.href = finalLink;
 dl.onclick = function(e){
     e.preventDefault();
-    window.open(finalLink, "_system"); // buka Chrome / browser default Android
+    window.open(finalLink, "_system");
     return false;
 }
 result.style.display="block";
