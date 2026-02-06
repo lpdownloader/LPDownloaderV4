@@ -12,23 +12,27 @@
 --gray:#888;
 --blue:#3b82f6;
 --green:#22c55e;
+--text:#fff;
+--caraText:#fff;
 }
 *{box-sizing:border-box;}
 html, body{
-background-color:#000 !important;
-color:#fff !important;
+background-color:var(--bg);
+color:var(--text);
 height:100%;
 margin:0;
 padding:0;
 font-family:Segoe UI,sans-serif;
+overflow:hidden;
 display:flex;
 justify-content:center;
+transition: background 0.3s, color 0.3s;
 }
 
-/* ===== LOADING SCREEN ===== */
+/* LOADING SCREEN */
 #opening{
 position:fixed;inset:0;
-background:#000;
+background:var(--bg);
 display:flex;flex-direction:column;align-items:center;justify-content:center;
 z-index:9999;
 text-align:center;
@@ -43,13 +47,13 @@ margin-bottom:20px;
 display:block;
 margin-top:5px;
 font-size:16px;
-color:#fff;
+color:var(--text);
 }
 .spinner{
 width:50px;
 height:50px;
 border:6px solid #444;
-border-top:6px solid #ff0000;
+border-top:6px solid var(--red);
 border-radius:50%;
 animation:spin 1s linear infinite;
 margin-top:10px;
@@ -59,14 +63,23 @@ margin-top:10px;
 100%{transform:rotate(360deg);}
 }
 
-/* ===== APP ===== */
-.container{width:100%;max-width:420px;padding:20px;display:none;}
+/* APP */
+.container{
+width:100%;
+max-width:420px;
+padding:20px;
+display:none;
+overflow-y:auto;
+max-height:100vh;
+padding-bottom:260px;
+transition: background 0.3s, color 0.3s;
+}
 
 /* HEADER */
 .header{
 display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
 }
-.menu,.update{font-size:22px;cursor:pointer}
+.menu,.update{font-size:22px;cursor:pointer;display:flex;align-items:center;gap:10px;}
 
 /* MODAL */
 .modal{
@@ -113,7 +126,10 @@ button:disabled{opacity:.6}
 /* PREVIEW */
 #preview{display:none;margin-top:15px;}
 #preview video{width:100%;aspect-ratio:16/9;border-radius:14px;background:#000;}
-#title{font-size:13px;margin-top:8px;color:#ddd;}
+#title{font-size:13px;margin-top:8px;color:#ddd;display:inline-block;}
+#copyTitleBtn{
+padding:4px 8px;margin-left:8px;font-size:12px;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;
+}
 
 /* RESULT */
 #result{display:none;text-align:center;margin-top:15px;}
@@ -128,6 +144,66 @@ button:disabled{opacity:.6}
 .val{font-size:18px;font-weight:bold;margin-top:5px}
 .blue{color:var(--blue)}
 .green{color:var(--green)}
+
+/* CARA PENGGUNAAN */
+#caraPenggunaan{
+margin-top:20px;
+background:var(--card);
+padding:15px;
+border-radius:15px;
+font-size:13px;
+line-height:1.5;
+color:var(--caraText);
+}
+#caraPenggunaan b{color:var(--text);}
+
+/* WA FLOATING */
+#waContainer{
+position:fixed;
+bottom:20px;
+right:20px;
+display:none;
+flex-direction:column;
+align-items:center;
+gap:5px;
+z-index:9999;
+background:rgba(0,0,0,0.6);
+padding:10px 15px;
+border-radius:12px;
+backdrop-filter:blur(5px);
+}
+#waText{
+color:#fff;
+font-size:14px;
+font-weight:bold;
+margin-bottom:5px;
+}
+#waButtons{
+display:flex;
+gap:10px;
+}
+.waBtn img{
+width:50px;
+height:50px;
+border-radius:50%;
+box-shadow:0 4px 8px rgba(0,0,0,0.3);
+transition: transform 0.2s;
+}
+.waBtn img:hover{
+transform:scale(1.1);
+}
+
+/* THEME TOGGLE */
+#themeToggle{
+padding:6px 12px;
+border-radius:8px;
+background:rgba(59,130,246,0.6);
+color:#fff;
+cursor:pointer;
+font-size:14px;
+display:flex;
+align-items:center;
+}
 </style>
 </head>
 <body>
@@ -140,15 +216,15 @@ button:disabled{opacity:.6}
 <span>LP DOWNLOADER V4</span>
 <span>WAIT LOADING</span>
 <div class="spinner"></div>
-<h3>DEVELOPER:<span>
-@Vitz<span>
-@Ady<span>
-</div>
+<h3>DEVELOPER:<span>@Vitz<span>@Ady<span></div>
 
 <div class="container" id="app">
 
 <div class="header">
+<div style="display:flex;align-items:center;gap:10px;">
 <span class="update" onclick="showModal('update')">📢</span>
+<span id="themeToggle">🌙 Mode</span>
+</div>
 <b>LP DOWNLOADER V4</b>
 <span class="menu" onclick="showModal('desc')">☰</span>
 </div>
@@ -184,7 +260,10 @@ button:disabled{opacity:.6}
 
 <div id="preview">
 <video id="video" controls></video>
-<div id="title"></div>
+<div>
+<span id="title"></span>
+<button id="copyTitleBtn">COPY CAPTION</button>
+</div>
 </div>
 
 <div id="result">
@@ -196,24 +275,35 @@ button:disabled{opacity:.6}
 
 <!-- STATS -->
 <div class="grid">
-  <div class="stat">
-    <span class="label">Status:</span>
-    <span class="val blue">API Active</span>
-  </div>
-  <div class="stat">
-    <span class="label">Server:</span>
-    <span class="val green">Normal</span>
-  </div>
-  <div class="stat">
-    <span class="label">Pengguna:</span>
-    <span class="val green">17</span>
-  </div>
-  <div class="stat">
-    <span class="label">Online:</span>
-    <span class="val blue">1</span>
-  </div>
+<div class="stat">
+<span class="label">Status:</span>
+<span class="val blue">API Active</span>
+</div>
+<div class="stat">
+<span class="label">Server:</span>
+<span class="val green">Normal</span>
+</div>
+<div class="stat">
+<span class="label">Pengguna:</span>
+<span class="val green" id="userCount">36</span>
+</div>
+<div class="stat">
+<span class="label">Online:</span>
+<span class="val blue" id="onlineVal">0</span>
+</div>
 </div>
 
+<!-- CARA PENGGUNAAN -->
+<div id="caraPenggunaan">
+<b>Cara Menggunakan Fitur LP Downloader:</b><br>
+1. Salin link video TikTok yang ingin diunduh.<br>
+2. Tempel link pada kolom "LINK TIKTOK".<br>
+3. Pilih format <b>MP4</b> untuk video atau <b>MP3</b> untuk audio.<br>
+4. Pilih kualitas <b>HD</b> atau <b>SD</b> sesuai kebutuhan.<br>
+5. Klik tombol <b>KLIK</b> untuk memulai proses.<br>
+6. Setelah preview muncul (untuk MP4), klik tombol <b>DOWNLOAD SEKARANG</b> untuk menyimpan file.<br>
+7. Setelah klik tombol <b>DOWNLOAD SEKARANG</b> lalu klik titik tiga yang ada di pojok kanan bawah video dan setelah itu klik tombol <b>DOWNLOAD</b>.<br>
+8. Untuk bantuan, hubungi developer melalui tombol WhatsApp di pojok kanan bawah.
 </div>
 
 <!-- MODAL -->
@@ -227,22 +317,67 @@ button:disabled{opacity:.6}
 <h3>Developer</h3>
 •Vitz Official<br>
 •Ady Official<br>
+•WhatsApp: <a href="https://wa.me/6288210002954" target="_blank">WA Vitz</a>, 
+<a href="https://wa.me/6289604418556" target="_blank">WA Ady</a>
 </div>
 
 <div class="modal" id="updateModal">
 <span class="modal-close" onclick="closeModal('updateModal')">✖</span>
-<h3>Update Terbaru</h3>
+<h3>Update Sekarang</h3>
 <p>✔ Tambah fitur MP3 & MP4<br>
 ✔ Stabil di Chrome & Android<br>
-✔ Preview video langsung</p>
+✔ Preview video langsung<br>
+✔ WA floating muncul setelah dashboard<br>
+✔ Cara penggunaan fitur LP Downloader<br>
+✔ Copy Caption</p>
 <h3>Developer</h3>
 •Vitz Official<br>
 •Ady Official<br>
+•WhatsApp: <a href="https://wa.me/6288210002954" target="_blank">WA Vitz</a>, 
+<a href="https://wa.me/6289604418556" target="_blank">WA Ady</a>
+</div>
+
+<!-- WA FLOATING -->
+<div id="waContainer">
+<div id="waText">Hubungi Developer</div>
+<div id="waButtons">
+<a href="https://wa.me/6288210002954" target="_blank" class="waBtn">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA Vitz">
+</a>
+<a href="https://wa.me/6289604418556" target="_blank" class="waBtn">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA Ady">
+</a>
+</div>
 </div>
 
 <script>
-/* LOADING 3 detik */
-setTimeout(()=>{opening.style.display="none";app.style.display="block";},10000);
+/* ELEMENTS */
+const urlInput=document.getElementById("url");
+const formatSelect=document.getElementById("format");
+const qualitySelect=document.getElementById("quality");
+const preview=document.getElementById("preview");
+const video=document.getElementById("video");
+const title=document.getElementById("title");
+const dl=document.getElementById("dl");
+const result=document.getElementById("result");
+const descModal=document.getElementById("descModal");
+const updateModal=document.getElementById("updateModal");
+const waContainer=document.getElementById("waContainer");
+const onlineVal = document.getElementById("onlineVal");
+const userCount = document.getElementById("userCount");
+const copyTitleBtn = document.getElementById("copyTitleBtn");
+const themeToggle = document.getElementById("themeToggle");
+const caraPenggunaan = document.getElementById("caraPenggunaan");
+const app = document.getElementById("app");
+const opening = document.getElementById("opening");
+
+/* LOADING 10 detik */
+setTimeout(()=>{
+  opening.style.display="none";
+  app.style.display="block";
+  waContainer.style.display="flex"; 
+  onlineVal.innerText = Math.floor(Math.random() * 9) + 1; 
+},10000);
 
 /* MODAL */
 function showModal(type){
@@ -255,55 +390,81 @@ function closeModal(id){
 
 /* DOWNLOAD VIDEO */
 async function getVideo(){
-const url=urlInput.value.trim();
-const format=formatSelect.value;
-const quality=qualitySelect.value;
-const btn=document.getElementById("btn");
-if(!url){alert("Masukin link TikTok dulu!");return;}
-btn.innerText="AMBIL DATA...";
-btn.disabled=true;
+  const url=urlInput.value.trim();
+  const format=formatSelect.value;
+  const quality=qualitySelect.value;
+  const btn=document.getElementById("btn");
+  if(!url){alert("Masukin link TikTok dulu!");return;}
+  btn.innerText="PROSES...";
+  btn.disabled=true;
 
-try{
-const r=await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
-const j=await r.json();
-if(!j.data) throw 0;
+  try{
+    const r=await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
+    const j=await r.json();
+    if(!j.data) throw 0;
 
-let videoLink = quality==="hd" ? (j.data.hdplay || j.data.play) : j.data.play;
-let finalLink = format==="mp3" ? j.data.music : videoLink;
+    let videoLink = quality==="hd" ? (j.data.hdplay || j.data.play) : j.data.play;
+    let finalLink = format==="mp3" ? j.data.music : videoLink;
 
-/* PREVIEW */
-if(format==="mp4"){video.src=finalLink;preview.style.display="block";}
-else{preview.style.display="none";}
-title.innerText=j.data.title || "TikTok Video";
+    if(format==="mp4"){video.src=finalLink;preview.style.display="block";}
+    else{preview.style.display="none";}
+    title.innerText=j.data.title || "TikTok Video";
 
-/* RESULT - buka di Chrome */
-dl.href = finalLink;
-dl.onclick = function(e){
-    e.preventDefault();
-    window.open(finalLink, "_system");
-    return false;
-}
-result.style.display="block";
-btn.innerText="SELESAI";
-
-}catch{
-alert("Gagal ambil video");
-btn.innerText="PROSES";
-}
-btn.disabled=false;
+    dl.href = finalLink;
+    dl.onclick = function(e){
+        e.preventDefault();
+        window.open(finalLink, "_system");
+        return false;
+    }
+    result.style.display="block";
+    btn.innerText="SELESAI";
+    urlInput.value = "";
+  }catch{
+    btn.innerText="PROSES";
+  }
+  btn.disabled=false;
 }
 
-/* ELEMENTS */
-const urlInput=document.getElementById("url");
-const formatSelect=document.getElementById("format");
-const qualitySelect=document.getElementById("quality");
-const preview=document.getElementById("preview");
-const video=document.getElementById("video");
-const title=document.getElementById("title");
-const dl=document.getElementById("dl");
-const result=document.getElementById("result");
-const descModal=document.getElementById("descModal");
-const updateModal=document.getElementById("updateModal");
+// Reset tombol ke KLIK saat user mulai ketik link baru
+urlInput.addEventListener('input', ()=>{
+    const btn = document.getElementById("btn");
+    btn.innerText = "KLIK";
+});
+
+// Copy title
+copyTitleBtn.addEventListener('click', ()=>{
+    navigator.clipboard.writeText(title.innerText);
+});
+
+// Tambah pengguna +2 setiap 1 jam
+setInterval(()=>{
+    let current = parseInt(userCount.innerText);
+    userCount.innerText = current + 3;
+}, 3600000);
+
+// Online live update 1–9 setiap 5 detik
+setInterval(()=>{
+    onlineVal.innerText = Math.floor(Math.random() * 9) + 1;
+}, 600000);
+
+// Theme toggle
+let darkMode = true;
+themeToggle.addEventListener('click', ()=>{
+    darkMode = !darkMode;
+    if(darkMode){
+        document.documentElement.style.setProperty('--bg','#000');
+        document.documentElement.style.setProperty('--card','#141414');
+        document.documentElement.style.setProperty('--text','#fff');
+        document.documentElement.style.setProperty('--caraText','#fff');
+        themeToggle.innerText = '🌙 Mode';
+    }else{
+        document.documentElement.style.setProperty('--bg','#fff');
+        document.documentElement.style.setProperty('--card','#f1f1f1');
+        document.documentElement.style.setProperty('--text','#000');
+        document.documentElement.style.setProperty('--caraText','#000');
+        themeToggle.innerText = '☀️ Mode';
+    }
+});
 </script>
 </body>
 </html>
