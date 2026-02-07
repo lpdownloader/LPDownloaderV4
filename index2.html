@@ -278,25 +278,25 @@ align-items:center;
 
 <!-- STATS -->
 <div class="grid">
+  <div class="stat">
+    <span class="label">Status:</span>
+    <span class="val blue">API Active</span>
+  </div>
+  <div class="stat">
+    <span class="label">Server:</span>
+    <span class="val green">Normal</span>
+  </div>
+  <div class="stat">
+    <span class="label">Pengguna:</span>
+    <span class="val green" id="userCount">0</span>
+  </div>
 <div class="stat">
-<span class="label">Status:</span>
-<span class="val blue">API Active</span>
+  <span class="label">Online:</span>
+  <span class="val blue" id="onlineVal">0</span>
 </div>
 <div class="stat">
-<span class="label">Server:</span>
-<span class="val green">Normal</span>
-</div>
-<div class="stat">
-<span class="label">Pengguna:</span>
-<span class="val green" id="userCount">0</span>
-</div>
-<div class="stat">
-<span class="label">Online:</span>
-<span class="val blue" id="onlineVal">0</span>
-</div>
-<div class="stat">
-<span class="label">Download:</span>
-<span class="val green" id="downloadVal">0</span>
+  <span class="label">Total Download:</span>
+  <span class="val green" id="downloadCount">0</span>
 </div>
 </div>
 
@@ -431,9 +431,11 @@ async function getVideo(){
     else{preview.style.display="none";}
     title.innerText=j.data.title || "TikTok Video";
 
-    dl.href = finalLink;
     dl.onclick = function(e){
     e.preventDefault();
+    window.open(finalLink, "_system");
+    return false;
+}
 
     // TAMBAH DOWNLOAD +1
     downloadRef.transaction(n => (n || 0) + 1);
@@ -464,7 +466,8 @@ copyTitleBtn.addEventListener('click', ()=>{
 /* ===== DATABASE STATS REALTIME ===== */
 const userRef = db.ref("stats/users");
 const onlineRef = db.ref("stats/online");
-const downloadRef = db.ref("stats/download");
+const downloadRef = db.ref("stats/downloads");
+const downloadCount = document.getElementById("downloadCount");
 
 /* TOTAL USER (1 DEVICE = 1 USER) */
 if(!localStorage.getItem("lp_user")){
@@ -502,9 +505,9 @@ onlineRef.on("value", snap=>{
   onlineVal.innerText = snap.val() || 0;
 });
 
-/* DOWNLOAD REALTIME */
+// TOTAL DOWNLOAD REALTIME
 downloadRef.on("value", snap=>{
-  downloadVal.innerText = snap.val() || 0;
+    downloadCount.innerText = snap.val() || 0;
 });
 
 // Theme toggle
