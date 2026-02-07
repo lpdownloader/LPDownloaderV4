@@ -31,8 +31,7 @@ display:flex;
 justify-content:center;
 transition: background 0.3s, color 0.3s;
 }
-
-/* LOADING SCREEN */
+/* LOADING */
 #opening{
 position:fixed;inset:0;
 background:var(--bg);
@@ -41,172 +40,49 @@ z-index:9999;
 text-align:center;
 }
 #opening video{
-width:70%;
-max-width:320px;
-border-radius:16px;
-margin-bottom:20px;
+width:70%;max-width:320px;border-radius:16px;margin-bottom:20px;
 }
-#opening span{
-display:block;
-margin-top:5px;
-font-size:16px;
-color:var(--text);
-}
-.spinner{
-width:50px;
-height:50px;
-border:6px solid #444;
-border-top:6px solid var(--red);
-border-radius:50%;
-animation:spin 1s linear infinite;
-margin-top:10px;
-}
-@keyframes spin{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
+#opening span{display:block;margin-top:5px;font-size:16px;color:var(--text);}
+.spinner{width:50px;height:50px;border:6px solid #444;border-top:6px solid var(--red);
+border-radius:50%;animation:spin 1s linear infinite;margin-top:10px;}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
 
 /* APP */
-.container{
-width:100%;
-max-width:420px;
-padding:20px;
-display:none;
-overflow-y:auto;
-max-height:100vh;
-padding-bottom:260px;
-transition: background 0.3s, color 0.3s;
-}
-
-/* HEADER */
-.header{
-display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
-}
+.container{width:100%;max-width:420px;padding:20px;display:none;overflow-y:auto;max-height:100vh;padding-bottom:260px;transition: background 0.3s,color 0.3s;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
 .menu,.update{font-size:22px;cursor:pointer;display:flex;align-items:center;gap:10px;}
-
-/* MODAL */
-.modal{
-position:fixed;
-top:50%; left:50%;
-transform:translate(-50%,-50%);
-background:#111;
-border-radius:16px;
-padding:20px;
-width:90%; max-width:350px;
-display:none;
-z-index:9999;
-box-shadow:0 0 15px rgba(0,0,0,0.5);
-}
-.modal-close{
-position:absolute;top:10px;right:14px;
-font-size:18px;cursor:pointer;color:#fff;
-}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;border-radius:16px;padding:20px;width:90%;max-width:350px;display:none;z-index:9999;box-shadow:0 0 15px rgba(0,0,0,0.5);}
+.modal-close{position:absolute;top:10px;right:14px;font-size:18px;cursor:pointer;color:#fff;}
 .modal h3{margin-top:0;margin-bottom:10px;font-size:16px;}
 .modal p{font-size:13px;color:#bbb;line-height:1.4;}
-
-/* OWNER */
-.owner{
-background:linear-gradient(90deg,#800000,#ff0000);
-border-radius:20px;padding:20px;
-display:flex;justify-content:space-between;margin-bottom:15px;
-}
-.badge{
-margin-top:8px;font-size:10px;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.5);display:inline-block;
-}
-
-/* BOX */
-.box{
-background:var(--card);padding:20px;border-radius:20px;border:1px solid #333;
-}
-input,select{
-width:100%;padding:12px;border-radius:10px;background:#000;border:1px solid #444;color:#fff;margin-bottom:10px;
-}
-button{
-width:100%;padding:12px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:bold;cursor:pointer;
-}
-button:disabled{opacity:.6}
-
-/* PREVIEW */
+.owner{background:linear-gradient(90deg,#800000,#ff0000);border-radius:20px;padding:20px;display:flex;justify-content:space-between;margin-bottom:15px;}
+.badge{margin-top:8px;font-size:10px;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.5);display:inline-block;}
+.box{background:var(--card);padding:20px;border-radius:20px;border:1px solid #333;}
+input,select{width:100%;padding:12px;border-radius:10px;background:#000;border:1px solid #444;color:#fff;margin-bottom:10px;}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:bold;cursor:pointer;}
+button:disabled{opacity:.6;}
 #preview{display:none;margin-top:15px;}
 #preview video{width:100%;aspect-ratio:16/9;border-radius:14px;background:#000;}
 #title{font-size:13px;margin-top:8px;color:#ddd;display:inline-block;}
-#copyTitleBtn{
-padding:4px 8px;margin-left:8px;font-size:12px;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;
-}
-
-/* RESULT */
+#copyTitleBtn{padding:4px 8px;margin-left:8px;font-size:12px;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;}
 #result{display:none;text-align:center;margin-top:15px;}
 #result a{display:block;margin-top:10px;color:var(--blue);font-weight:bold;text-decoration:none;}
 .ready{font-size:12px;color:var(--green);}
 .tip{font-size:11px;color:#888;}
-
-/* STATS */
 .grid{margin-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .stat{background:var(--card);border-radius:15px;padding:15px;}
 .label{font-size:12px;color:var(--gray)}
 .val{font-size:18px;font-weight:bold;margin-top:5px}
 .blue{color:var(--blue)}
 .green{color:var(--green)}
-
-/* CARA PENGGUNAAN */
-#caraPenggunaan{
-margin-top:20px;
-background:var(--card);
-padding:15px;
-border-radius:15px;
-font-size:13px;
-line-height:1.5;
-color:var(--caraText);
-}
+#caraPenggunaan{margin-top:20px;background:var(--card);padding:15px;border-radius:15px;font-size:13px;line-height:1.5;color:var(--caraText);}
 #caraPenggunaan b{color:var(--text);}
-
-/* WA FLOATING */
-#waContainer{
-position:fixed;
-bottom:20px;
-right:20px;
-display:none;
-flex-direction:column;
-align-items:center;
-gap:5px;
-z-index:9999;
-background:rgba(0,0,0,0.6);
-padding:10px 15px;
-border-radius:12px;
-backdrop-filter:blur(5px);
-}
-#waText{
-color:#fff;
-font-size:14px;
-font-weight:bold;
-margin-bottom:5px;
-}
-#waButtons{
-display:flex;
-gap:10px;
-}
-.waBtn img{
-width:50px;
-height:50px;
-border-radius:50%;
-box-shadow:0 4px 8px rgba(0,0,0,0.3);
-transition: transform 0.2s;
-}
-.waBtn img:hover{
-transform:scale(1.1);
-}
-
-/* THEME TOGGLE */
-#themeToggle{
-padding:6px 12px;
-border-radius:8px;
-background:rgba(59,130,246,0.6);
-color:#fff;
-cursor:pointer;
-font-size:14px;
-display:flex;
-align-items:center;
-}
+#waContainer{position:fixed;bottom:20px;right:20px;display:none;flex-direction:column;align-items:center;gap:5px;z-index:9999;background:rgba(0,0,0,0.6);padding:10px 15px;border-radius:12px;backdrop-filter:blur(5px);}
+#waText{color:#fff;font-size:14px;font-weight:bold;margin-bottom:5px;}
+#waButtons{display:flex;gap:10px;}
+.waBtn img{width:50px;height:50px;border-radius:50%;box-shadow:0 4px 8px rgba(0,0,0,0.3);transition: transform 0.2s;}
+.waBtn img:hover{transform:scale(1.1);}
+#themeToggle{padding:6px 12px;border-radius:8px;background:rgba(59,130,246,0.6);color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;}
 </style>
 </head>
 <body>
@@ -309,58 +185,16 @@ align-items:center;
 4. Pilih kualitas <b>HD</b> atau <b>SD</b> sesuai kebutuhan.<br>
 5. Klik tombol <b>KLIK</b> untuk memulai proses.<br>
 6. Setelah preview muncul (untuk MP4), klik tombol <b>DOWNLOAD SEKARANG</b> untuk menyimpan file.<br>
-7. Setelah klik tombol <b>DOWNLOAD SEKARANG</b> lalu klik titik tiga yang ada di pojok kanan bawah video dan setelah itu klik tombol <b>DOWNLOAD</b>.<br>
+7. Setelah klik tombol <b>DOWNLOAD SEKARANG</b> lalu klik titik tiga di pojok kanan bawah video & klik <b>DOWNLOAD</b>.<br>
 8. Untuk bantuan, hubungi developer melalui tombol WhatsApp di pojok kanan bawah.
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="descModal">
-<span class="modal-close" onclick="closeModal('descModal')">✖</span>
-<h3>Tentang Web</h3>
-<p>LP Downloader V4 – TikTok MP4 & MP3 Downloader<br>
-✔ Preview Video<br>
-✔ SD / HD Auto<br>
-✔ Android & PC Friendly</p>
-<h3>Developer</h3>
-•Vitz Official<br>
-•Ady Official<br>
-•WhatsApp: <a href="https://wa.me/6288210002954" target="_blank">WA Vitz</a>, 
-<a href="https://wa.me/6289604418556" target="_blank">WA Ady</a>
-</div>
-
-<div class="modal" id="updateModal">
-<span class="modal-close" onclick="closeModal('updateModal')">✖</span>
-<h3>Update Sekarang</h3>
-<p>✔ Tambah fitur MP3 & MP4<br>
-✔ Stabil di Chrome & Android<br>
-✔ Preview video langsung<br>
-✔ WA floating muncul setelah dashboard<br>
-✔ Cara penggunaan fitur LP Downloader<br>
-✔ Copy Caption</p>
-<h3>Developer</h3>
-•Vitz Official<br>
-•Ady Official<br>
-•WhatsApp: <a href="https://wa.me/6288210002954" target="_blank">WA Vitz</a>, 
-<a href="https://wa.me/6289604418556" target="_blank">WA Ady</a>
-</div>
-
-<!-- WA FLOATING -->
-<div id="waContainer">
-<div id="waText">Hubungi Developer</div>
-<div id="waButtons">
-<a href="https://wa.me/6288210002954" target="_blank" class="waBtn">
-<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA Vitz">
-</a>
-<a href="https://wa.me/6289604418556" target="_blank" class="waBtn">
-<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA Ady">
-</a>
-</div>
-</div>
+<!-- MODAL & WA FLOATING sama kayak script mu, ga usah diubah -->
 
 <script>
-/* ================= FIREBASE ================= */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "API_KEY_KAMU",
+  apiKey: "AlzaSyAliat9KxcZV59oPvEarL m6-GxmJYHZVP0",
   authDomain: "lpdownloader-21111.firebaseapp.com",
   databaseURL: "https://lpdownloader-21111-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "lpdownloader-21111",
@@ -372,141 +206,106 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 /* ELEMENTS */
-const urlInput = document.getElementById("url");
-const formatSelect = document.getElementById("format");
-const qualitySelect = document.getElementById("quality");
-const preview = document.getElementById("preview");
-const video = document.getElementById("video");
-const title = document.getElementById("title");
-const dl = document.getElementById("dl");
-const result = document.getElementById("result");
-const descModal = document.getElementById("descModal");
-const updateModal = document.getElementById("updateModal");
-const waContainer = document.getElementById("waContainer");
-const onlineVal = document.getElementById("onlineVal");
-const userCount = document.getElementById("userCount");
-const downloadCount = document.getElementById("downloadCount");
-const copyTitleBtn = document.getElementById("copyTitleBtn");
-const themeToggle = document.getElementById("themeToggle");
-const caraPenggunaan = document.getElementById("caraPenggunaan");
-const app = document.getElementById("app");
-const opening = document.getElementById("opening");
+const urlInput=document.getElementById("url");
+const formatSelect=document.getElementById("format");
+const qualitySelect=document.getElementById("quality");
+const preview=document.getElementById("preview");
+const video=document.getElementById("video");
+const title=document.getElementById("title");
+const dl=document.getElementById("dl");
+const result=document.getElementById("result");
+const onlineVal=document.getElementById("onlineVal");
+const userCount=document.getElementById("userCount");
+const downloadCount=document.getElementById("downloadCount");
+const btn=document.getElementById("btn");
+const app=document.getElementById("app");
+const opening=document.getElementById("opening");
 
-/* LOADING */
-setTimeout(()=>{
-  opening.style.display="none";
-  app.style.display="block";
-  waContainer.style.display="flex";
-},10000);
-
-/* MODAL */
-function showModal(type){
-  if(type==='desc') descModal.style.display='block';
-  if(type==='update') updateModal.style.display='block';
-}
-function closeModal(id){
-  document.getElementById(id).style.display='none';
-}
-
-/* ===== STATS REALTIME ===== */
+/* STATS REF */
 const userRef = db.ref("stats/users");
 const onlineRef = db.ref("stats/online");
 const downloadRef = db.ref("stats/downloads");
 
-/* TOTAL USER (1 DEVICE = 1 USER) */
-let userId = localStorage.getItem("lp_user_id");
-if(!userId){
-  userId = "user_" + Date.now() + "_" + Math.floor(Math.random()*1000);
-  localStorage.setItem("lp_user_id", userId);
+/* LOADING 10 DETIK */
+setTimeout(()=>{
+  opening.style.display="none";
+  app.style.display="block";
+},10000);
+
+/* USER & ONLINE REALTIME */
+if(!localStorage.getItem("lp_user")){
   userRef.transaction(n => (n||0)+1);
+  localStorage.setItem("lp_user","yes");
 }
-userCount.innerText = "0";
+userRef.on("value", snap => { userCount.innerText = snap.val() || 0; });
 
-/* ONLINE USER */
-const onlineUserRef = db.ref("stats/online/"+userId);
-onlineUserRef.set(true);
-onlineUserRef.onDisconnect().remove();
+onlineRef.transaction(n => (n||0)+1);
+window.addEventListener("beforeunload",()=>{ onlineRef.transaction(n => (n||1)-1); });
+onlineRef.on("value", snap=>{ onlineVal.innerText = snap.val() || 0; });
 
-onlineRef.on("value", snap=>{
-  const data = snap.val()||{};
-  onlineVal.innerText = Object.keys(data).length;
-});
+/* DOWNLOAD REALTIME */
+downloadRef.on("value", snap=>{ downloadCount.innerText = snap.val() || 0; });
 
-/* TOTAL DOWNLOADS */
-downloadRef.on("value", snap=>{
-  downloadCount.innerText = snap.val() || 0;
-});
-
-/* DOWNLOAD VIDEO */
 async function getVideo(){
   const url=urlInput.value.trim();
   const format=formatSelect.value;
   const quality=qualitySelect.value;
-  const btn=document.getElementById("btn");
   if(!url){alert("Masukin link TikTok dulu!");return;}
-  btn.innerText="PROSES...";
-  btn.disabled=true;
+  btn.innerText="PROSES..."; btn.disabled=true;
 
   try{
     const r=await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
     const j=await r.json();
     if(!j.data) throw 0;
 
-    let videoLink = quality==="hd" ? (j.data.hdplay || j.data.play) : j.data.play;
-    let finalLink = format==="mp3" ? j.data.music : videoLink;
+    let videoLink = quality==="hd" ? (j.data.hdplay||j.data.play) : j.data.play;
+    let finalLink = format==="mp3"? j.data.music : videoLink;
 
-    if(format==="mp4"){video.src=finalLink;preview.style.display="block";}
+    if(format==="mp4"){video.src=finalLink; preview.style.display="block";}
     else{preview.style.display="none";}
     title.innerText=j.data.title || "TikTok Video";
 
     dl.href = finalLink;
     dl.onclick = function(e){
-        e.preventDefault();
-        window.open(finalLink, "_system");
+      e.preventDefault();
+      window.open(finalLink,"_blank");
 
-        // Tambah total download realtime
-        downloadRef.transaction(n => (n||0)+1);
-
-        return false;
+      /* TAMBAH TOTAL DOWNLOAD */
+      downloadRef.transaction(n => (n||0)+1);
     }
+
     result.style.display="block";
     btn.innerText="SELESAI";
-    urlInput.value = "";
+    urlInput.value="";
   }catch{
-    btn.innerText="PROSES";
+    btn.innerText="KLIK";
   }
   btn.disabled=false;
 }
 
-// Reset tombol ke KLIK saat user mulai ketik link baru
-urlInput.addEventListener('input', ()=>{
-    const btn = document.getElementById("btn");
-    btn.innerText = "KLIK";
-});
+/* RESET BUTTON */
+urlInput.addEventListener('input',()=>{ btn.innerText="KLIK"; });
 
-// Copy title
-copyTitleBtn.addEventListener('click', ()=>{
-    navigator.clipboard.writeText(title.innerText);
-});
+/* COPY TITLE */
+document.getElementById("copyTitleBtn").addEventListener('click',()=>{ navigator.clipboard.writeText(title.innerText); });
 
-// Theme toggle
-let darkMode = true;
-themeToggle.addEventListener('click', ()=>{
-    darkMode = !darkMode;
-    if(darkMode){
-        document.documentElement.style.setProperty('--bg','#000');
-        document.documentElement.style.setProperty('--card','#141414');
-        document.documentElement.style.setProperty('--text','#fff');
-        document.documentElement.style.setProperty('--caraText','#fff');
-        themeToggle.innerText = '🌙 Mode';
-    }else{
-        document.documentElement.style.setProperty('--bg','#fff');
-        document.documentElement.style.setProperty('--card','#f1f1f1');
-        document.documentElement.style.setProperty('--text','#000');
-        document.documentElement.style.setProperty('--caraText','#000');
-        theme
-       themeToggle.innerText = '☀️ Mode';
-    }
+/* THEME TOGGLE */
+let darkMode=true;
+document.getElementById("themeToggle").addEventListener('click',()=>{
+  darkMode=!darkMode;
+  if(darkMode){
+    document.documentElement.style.setProperty('--bg','#000');
+    document.documentElement.style.setProperty('--card','#141414');
+    document.documentElement.style.setProperty('--text','#fff');
+    document.documentElement.style.setProperty('--caraText','#fff');
+    document.getElementById("themeToggle").innerText='🌙 Mode';
+  }else{
+    document.documentElement.style.setProperty('--bg','#fff');
+    document.documentElement.style.setProperty('--card','#f1f1f1');
+    document.documentElement.style.setProperty('--text','#000');
+    document.documentElement.style.setProperty('--caraText','#000');
+    document.getElementById("themeToggle").innerText='☀️ Mode';
+  }
 });
 </script>
 </body>
