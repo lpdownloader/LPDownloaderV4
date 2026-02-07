@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LP DOWNLOADER V4</title>
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <style>
 :root{
 --bg:#000;
@@ -285,11 +288,15 @@ align-items:center;
 </div>
 <div class="stat">
 <span class="label">Pengguna:</span>
-<span class="val green" id="userCount">36</span>
+<span class="val green" id="userCount">0</span>
 </div>
 <div class="stat">
 <span class="label">Online:</span>
 <span class="val blue" id="onlineVal">0</span>
+</div>
+<div class="stat">
+<span class="label">Download:</span>
+<span class="val green" id="downloadVal">0</span>
 </div>
 </div>
 
@@ -351,6 +358,20 @@ align-items:center;
 </div>
 
 <script>
+  /* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AlzaSyAliat9KxcZV59oPvEarL m6-GxmJYHZVP0",
+  authDomain: "lpdownloader-21111.firebaseapp.com",
+  databaseURL: "https://lpdownloader-21111-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "lpdownloader-21111",
+  storageBucket: "lpdownloader-21111.appspot.com",
+  messagingSenderId: "395505695935",
+  appId: "1:395505695935"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+/* ============================================ */
 /* ELEMENTS */
 const urlInput=document.getElementById("url");
 const formatSelect=document.getElementById("format");
@@ -365,6 +386,7 @@ const updateModal=document.getElementById("updateModal");
 const waContainer=document.getElementById("waContainer");
 const onlineVal = document.getElementById("onlineVal");
 const userCount = document.getElementById("userCount");
+const downloadVal = document.getElementById("downloadVal");
 const copyTitleBtn = document.getElementById("copyTitleBtn");
 const themeToggle = document.getElementById("themeToggle");
 const caraPenggunaan = document.getElementById("caraPenggunaan");
@@ -375,8 +397,7 @@ const opening = document.getElementById("opening");
 setTimeout(()=>{
   opening.style.display="none";
   app.style.display="block";
-  waContainer.style.display="flex"; 
-  onlineVal.innerText = Math.floor(Math.random() * 9) + 1; 
+  waContainer.style.display="flex";
 },10000);
 
 /* MODAL */
@@ -412,10 +433,14 @@ async function getVideo(){
 
     dl.href = finalLink;
     dl.onclick = function(e){
-        e.preventDefault();
-        window.open(finalLink, "_system");
-        return false;
-    }
+    e.preventDefault();
+
+    // TAMBAH DOWNLOAD +1
+    downloadRef.transaction(n => (n || 0) + 1);
+
+    window.open(finalLink, "_system");
+    return false;
+}
     result.style.display="block";
     btn.innerText="SELESAI";
     urlInput.value = "";
@@ -436,16 +461,51 @@ copyTitleBtn.addEventListener('click', ()=>{
     navigator.clipboard.writeText(title.innerText);
 });
 
-// Tambah pengguna +2 setiap 1 jam
-setInterval(()=>{
-    let current = parseInt(userCount.innerText);
-    userCount.innerText = current + 3;
-}, 3600000);
+/* ===== DATABASE STATS REALTIME ===== */
+const userRef = db.ref("stats/users");
+const onlineRef = db.ref("stats/online");
+const downloadRef = db.ref("stats/download");
 
-// Online live update 1–9 setiap 5 detik
-setInterval(()=>{
-    onlineVal.innerText = Math.floor(Math.random() * 9) + 1;
-}, 600000);
+/* TOTAL USER (1 DEVICE = 1 USER) */
+if(!localStorage.getItem("lp_user")){
+  userRef.transaction(n => (n || 0) + 1);
+  localStorage.setItem("lp_user","yes");
+}
+
+userRef.on("value", snap=>{
+  userCount.innerText = snap.val() || 0;
+});
+
+/* TOTAL USER (1 DEVICE = 1 USER) */
+if(!localStorage.getItem("lp_user")){
+  userRef.transaction(n => (n || 0) + 1);
+  localStorage.setItem("lp_user","yes");
+
+  // tambahin online juga cuma 1x per device
+  onlineRef.transaction(n => (n || 0) + 1);
+  localStorage.setItem("lp_online","yes");
+}
+
+// handle online saat close window
+window.addEventListener("beforeunload", ()=>{
+  if(localStorage.getItem("lp_online")){
+    onlineRef.transaction(n => (n || 1) - 1);
+    localStorage.removeItem("lp_online");
+  }
+});
+
+userRef.on("value", snap=>{
+  userCount.innerText = snap.val() || 0;
+});
+
+onlineRef.on("value", snap=>{
+  onlineVal.innerText = snap.val() || 0;
+});
+
+/* DOWNLOAD REALTIME */
+downloadRef.on("value", snap=>{
+  downloadVal.innerText = snap.val() || 0;
+});
 
 // Theme toggle
 let darkMode = true;
