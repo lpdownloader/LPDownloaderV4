@@ -365,10 +365,7 @@ myOnlineRef.set(true); // online saat masuk
 myOnlineRef.onDisconnect().remove(); // hilang saat keluar
 
 // Update total users (1 device = 1 user)
-if(!localStorage.getItem("visited")){
-  userRef.transaction(n => (n||0)+1);
-  localStorage.setItem("visited","1");
-}
+userRef.transaction(n => (n||0)+1);
 userRef.on("value", snap => userCount.innerText = snap.val()||0);
 
 // Online realtime
