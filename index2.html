@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<!-- OPEN GRAPH (PREVIEW SOSMED) -->
+<meta property="og:title" content="LP Downloader V4 - Download Video MP4">
+<meta property="og:description" content="Download video TikTok MP4 & MP3 tanpa aplikasi. Cepat & gratis.">
+<meta property="og:image" content="https://ar-hosting.pages.dev/1770377225662.jpg">
+<meta property="og:url" content="https://lpdownloader.github.io/LPDownloaderV4/index2.html">
+<meta property="og:type" content="website">
+
 <!-- SEO META -->
 <title>LP Downloader V4 - Download Video MP4 Tanpa Aplikasi</title>
  <meta charset="UTF-8">
@@ -8,6 +15,7 @@
 <meta name="description" content="LP Downloader V4 adalah web downloader gratis untuk download video MP4 tanpa aplikasi. Cepat, ringan, dan responsif di HP & PC.">
 <meta name="keywords" content="LP Downloader, LP Downloader V4, downloader video, download mp4, web downloader">
 <meta name="robots" content="index, follow">
+<link rel="canonical" href="https://lpdownloader.github.io/LPDownloaderV4/index2.html">
 
 <!-- Google Verification -->
 <meta name="google-site-verification" content="google85183288fa640f5d">
@@ -26,7 +34,8 @@
 --caraText:#fff;
 }
 *{box-sizing:border-box;}
-html,body{margin:0;padding:0;height:100%;display:flex;justify-content:center;align-items:flex-start;background:var(--bg);color:var(--text);font-family:Segoe UI,sans-serif;overflow:hidden;}
+html,body{margin:0;padding:0;height:100%;display:flex;justify-content:center;align-items:flex-start;background:var(--bg);color:var(--text);font-family:Segoe UI,sans-serif;
+}
 #opening{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;text-align:center;}
 #opening video{width:70%;max-width:320px;border-radius:16px;margin-bottom:20px;}
 #opening span{display:block;margin-top:5px;font-size:16px;color:var(--text);}
@@ -173,13 +182,14 @@ html, body {
 <body>
 
 <div id="opening">
-<video autoplay muted loop>
-<source src="https://ar-hosting.pages.dev/1770287179319.mp4" type="video/mp4">
-</video>
-<span>LP DOWNLOADER V4</span>
-<span>WAIT LOADING</span>
-<div class="spinner"></div>
-<h3>DEVELOPER:<span>@Vitz<span>@Ady<span></div>
+  <video autoplay muted loop>
+    <source src="https://ar-hosting.pages.dev/1770287179319.mp4" type="video/mp4">
+  </video>
+  <span>LP DOWNLOADER V4</span>
+  <span>WAIT LOADING</span>
+  <div class="spinner"></div>
+  <h3>DEVELOPER: <span>@Vitz</span> <span>@Ady</span></h3>
+</div> <!-- ⬅️ INI WAJIB -->
 
 <div class="container" id="app">
 <div class="header">
@@ -354,8 +364,11 @@ const myOnlineRef = onlineRef.push(uid);
 myOnlineRef.set(true); // online saat masuk
 myOnlineRef.onDisconnect().remove(); // hilang saat keluar
 
-// Update total users realtime
-userRef.transaction(n => (n||0)+1);
+// Update total users (1 device = 1 user)
+if(!localStorage.getItem("visited")){
+  userRef.transaction(n => (n||0)+1);
+  localStorage.setItem("visited","1");
+}
 userRef.on("value", snap => userCount.innerText = snap.val()||0);
 
 // Online realtime
@@ -391,7 +404,7 @@ async function getVideo(){
     dl.onclick = function(e){
         e.preventDefault();
         downloadRef.transaction(n => (n||0)+1);
-        setTimeout(()=>window.open(finalLink,"_system"),50);
+        setTimeout(()=>window.open(finalLink,"_blank"),50);
         return false;
     }
 
