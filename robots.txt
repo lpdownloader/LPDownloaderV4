@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lpdownloader.github.io/LPDownloaderV4/sitemap.xml
