@@ -66,12 +66,20 @@ button:disabled{opacity:.6;}
 .stat{background:var(--card);border-radius:15px;padding:15px;}
 .label{font-size:12px;color:var(--gray);}
 .val{font-size:18px;font-weight:bold;margin-top:5px;}
-.blue{color:var(--blue);}
-.green{color:var(--green);}
+.val {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.val.blue { color: #3b82f6; }  /* biru: API + Online */
+.val.green { color: #22c55e; } /* hijau: Pengguna + Total Download */
+.val.yellow { color: #eab308; } /* kuning: Server Delay */
+.val.red { color: #ff0000; }    /* merah: Server Error */
 #caraPenggunaan{margin-top:20px;background:var(--card);padding:15px;border-radius:15px;font-size:13px;line-height:1.5;color:var(--caraText);}
 #caraPenggunaan b{color:var(--text);}
 #waContainer{position:fixed;bottom:20px;right:20px;display:none;flex-direction:column;align-items:center;gap:5px;z-index:9999;background:rgba(0,0,0,0.6);padding:10px 15px;border-radius:12px;backdrop-filter:blur(5px);}
-#waText{color:#fff;font-size:14px;font-weight:bold;margin-bottom:5px;}
+#waText { color: #fff; font-size:14px; font-weight:bold; margin-bottom:5px; }
 #waButtons{display:flex;gap:10px;}
 .waBtn img{width:50px;height:50px;border-radius:50%;box-shadow:0 4px 8px rgba(0,0,0,0.3);transition: transform 0.2s;}
 .waBtn img:hover{transform:scale(1.1);}
@@ -241,26 +249,35 @@ html, body {
 </div>
 
 <div class="grid">
-<div class="stat">
-<span class="label">Status:</span>
-<span class="val blue">API Active</span>
-</div>
-<div class="stat">
-<span class="label">Server:</span>
-<span class="val green">Normal</span>
-</div>
-<div class="stat">
-<span class="label">Pengguna:</span>
-<span class="val green" id="userCount">0</span>
-</div>
-<div class="stat">
-<span class="label">Online:</span>
-<span class="val blue" id="onlineVal">0</span>
-</div>
-<div class="stat">
-<span class="label">Total Download:</span>
-<span class="val green" id="downloadCount">0</span>
-</div>
+  <!-- API Status (statis biru) -->
+  <div class="stat">
+    <span class="label">Status:</span>
+    <span class="val blue">API Active</span>
+  </div>
+
+  <!-- Server (dinamis) -->
+  <div class="stat">
+    <span class="label">Server:</span>
+    <span class="val green" id="serverStatus">Normal</span>
+  </div>
+
+  <!-- Pengguna (statis hijau, realtime) -->
+  <div class="stat">
+    <span class="label">Pengguna:</span>
+    <span class="val green" id="userCount">0</span>
+  </div>
+
+  <!-- Online (statis biru, realtime) -->
+  <div class="stat">
+    <span class="label">Online:</span>
+    <span class="val blue" id="onlineVal">0</span>
+  </div>
+
+  <!-- Total Download (statis hijau, realtime) -->
+  <div class="stat">
+    <span class="label">Total Download:</span>
+    <span class="val green" id="downloadCount">0</span>
+  </div>
 </div>
 
 <!-- CARA PENGGUNAAN -->
@@ -310,6 +327,7 @@ html, body {
 </div>
 
 <script>
+// 1️⃣ Inisialisasi Firebase
 const firebaseConfig = {
   apiKey: "AlzaSyAliat9KxcZV59oPvEarLm6-GxmJYHZVP0",
   authDomain: "lpdownloader-21111.firebaseapp.com",
@@ -322,6 +340,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// 2️⃣ Ambil elemen HTML (Hanya 1x deklarasi)
+const serverStatusEl = document.getElementById("serverStatus");
+const onlineVal = document.getElementById("onlineVal");
+const userCount = document.getElementById("userCount");
+const downloadCount = document.getElementById("downloadCount");
 const urlInput = document.getElementById("url");
 const formatSelect = document.getElementById("format");
 const qualitySelect = document.getElementById("quality");
@@ -333,91 +356,100 @@ const result = document.getElementById("result");
 const descModal = document.getElementById("descModal");
 const updateModal = document.getElementById("updateModal");
 const waContainer = document.getElementById("waContainer");
-const onlineVal = document.getElementById("onlineVal");
-const userCount = document.getElementById("userCount");
-const downloadCount = document.getElementById("downloadCount");
 const copyTitleBtn = document.getElementById("copyTitleBtn");
 const themeToggle = document.getElementById("themeToggle");
 const app = document.getElementById("app");
 const opening = document.getElementById("opening");
 
-setTimeout(()=>{
-  opening.style.display="none";
-  app.style.display="block";
-  waContainer.style.display="flex";
-},10000);
+const btn = document.getElementById("btn");
 
-function showModal(type){
-  if(type==='desc') descModal.style.display='block';
-  if(type==='update') updateModal.style.display='block';
-}
-function closeModal(id){document.getElementById(id).style.display='none';}
-
-// ===== STATS REALTIME =====
+// 3️⃣ Realtime Stats Firebase
 const userRef = db.ref("stats/users");
 const onlineRef = db.ref("stats/online");
 const downloadRef = db.ref("stats/downloads");
 
-// PENAMBAHAN PENGGUNA REAlTIME
-const uid = Date.now() + Math.random();
-const myOnlineRef = onlineRef.push(uid);
-myOnlineRef.set(true); // online saat masuk
-myOnlineRef.onDisconnect().remove(); // hilang saat keluar
+// 4️⃣ Cek server realtime
+setInterval(checkServer, 5000);
+checkServer();
 
-// Update total users (1 device = 1 user)
-userRef.transaction(n => (n||0)+1);
-userRef.on("value", snap => userCount.innerText = snap.val()||0);
+// 5️⃣ Fungsi download video lengkap
+async function getVideo() {
+    const url = urlInput.value.trim();
+    const format = formatSelect.value;
+    const quality = qualitySelect.value;
 
-// Online realtime
-onlineRef.on("value", snap => {
-    onlineVal.innerText = snap.numChildren() || 0;
-});
-
-// Download realtime
-downloadRef.on("value", snap => downloadCount.innerText = snap.val()||0);
-
-// DOWNLOAD VIDEO
-async function getVideo(){
-  const url = urlInput.value.trim();
-  const format = formatSelect.value;
-  const quality = qualitySelect.value;
-  const btn = document.getElementById("btn");
-  if(!url){alert("Masukin link TikTok dulu!");return;}
-  btn.innerText="PROSES...";
-  btn.disabled=true;
-
-  try{
-    const r = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
-    const j = await r.json();
-    if(!j.data) throw 0;
-
-    let videoLink = quality==="hd"? (j.data.hdplay||j.data.play) : j.data.play;
-    let finalLink = format==="mp3"? j.data.music : videoLink;
-
-    if(format==="mp4"){video.src=finalLink; preview.style.display="block";}
-    else{preview.style.display="none";}
-    titleEl.innerText = j.data.title || "TikTok Video";
-
-    dl.onclick = function(e){
-        e.preventDefault();
-        downloadRef.transaction(n => (n||0)+1);
-        setTimeout(()=>window.open(finalLink,"_blank"),50);
-        return false;
+    if (!url) {
+        alert("MASUKIN LINK TIKTOK DULU!");
+        return;
     }
 
-    result.style.display="block";
-    btn.innerText="SELESAI";
-    urlInput.value="";
-  }catch{
-    btn.innerText="PROSES";
-  }
-  btn.disabled=false;
+    // Status server
+    if (serverStatusEl.classList.contains("red")) {
+        alert("SERVER SEDANG ERROR, TIDAK DAPAT DI DOWNLOAD!");
+        return;
+    }
+
+    // Alert jika server delay
+    if (serverStatusEl.classList.contains("yellow")) {
+        alert("SERVER SEDANG DELAY, PROSES DOWNLOAD MUNGKIN AKAN DELAY DIKIT.");
+    }
+
+    btn.innerText = "PROSES...";
+    btn.disabled = true;
+
+    try {
+        const r = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
+        const j = await r.json();
+
+        // Cek validitas data
+        if (!j.data || !j.data.play) {
+            throw new Error("Invalid URL");
+        }
+
+        let videoLink = quality === "hd" ? (j.data.hdplay || j.data.play) : j.data.play;
+        let finalLink = format === "mp3" ? j.data.music : videoLink;
+
+        if (format === "mp4") {
+            video.src = finalLink;
+            preview.style.display = "block";
+        } else {
+            preview.style.display = "none";
+        }
+
+        titleEl.innerText = j.data.title || "TikTok Video";
+
+        dl.onclick = function (e) {
+            e.preventDefault();
+            if (serverStatusEl.classList.contains("red")) {
+                alert("SERVER SEDANG ERROR, COBA LAGI NANTI");
+                return false;
+            }
+            downloadRef.transaction(n => (n || 0) + 1);
+            setTimeout(() => window.open(finalLink, "_blank"), 50);
+            return false;
+        };
+
+        result.style.display = "block";
+        btn.innerText = "SELESAI";
+        urlInput.value = "";
+
+    } catch (err) {
+        btn.innerText = "KLIK";
+        if (err.message === "Invalid URL") {
+            alert("LINK TIKTOK TIDAK VALID!");
+        } else {
+            alert("TERJADI KESALAHAN, PASTIKAN LINK BENAR ATAU COBA LAGI NANTI.");
+        }
+    }
+
+    btn.disabled = false;
 }
 
-urlInput.addEventListener('input', ()=>{document.getElementById("btn").innerText="KLIK";});
+// 6️⃣ Event listener
+urlInput.addEventListener('input', ()=>{btn.innerText="KLIK";});
 copyTitleBtn.addEventListener('click', ()=>{navigator.clipboard.writeText(titleEl.innerText);});
 
-// Theme toggle
+// 7️⃣ Theme toggle
 let darkMode = true;
 themeToggle.addEventListener('click', ()=>{
     darkMode = !darkMode;
@@ -435,6 +467,66 @@ themeToggle.addEventListener('click', ()=>{
         themeToggle.innerText = '☀️ Mode';
     }
 });
+
+// 8️⃣ Show App & WA after loading
+// Fungsi hide opening dan show app
+function showApp(){
+  opening.style.display="none";
+  app.style.display="block";
+  waContainer.style.display="flex";
+}
+
+// Inisialisasi app: cek server dulu
+setTimeout(()=>{
+  opening.style.display="none";
+  app.style.display="block";
+  waContainer.style.display="flex";
+}, 10000);
+
+checkServer();
+setInterval(checkServer, 5000);
+
+// Jalankan cek server secara paralel
+async function checkServer(){
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+    const res = await fetch("https://www.tikwm.com/api/?url=https://www.tiktok.com/@user/video/0", { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if(!res.ok) throw new Error("HTTP error");
+
+    serverStatusEl.innerText = "Normal";
+    serverStatusEl.className = "val green"; // hijau jika normal
+  } catch(err) {
+    if(err.name === "AbortError") {
+      serverStatusEl.innerText = "Delay";
+      serverStatusEl.className = "val yellow"; // kuning
+    } else {
+      serverStatusEl.innerText = "Error";
+      serverStatusEl.className = "val red"; // merah
+    }
+  }
+}
+
+// 9️⃣ Modal
+function showModal(type){
+  if(type==='desc') descModal.style.display='block';
+  if(type==='update') updateModal.style.display='block';
+}
+function closeModal(id){document.getElementById(id).style.display='none';}
+
+//  🔟 Stats realtime Firebase
+const uid = Date.now() + Math.random();
+const myOnlineRef = onlineRef.push(uid);
+myOnlineRef.set(true);
+myOnlineRef.onDisconnect().remove();
+
+userRef.transaction(n => (n||0)+1);
+userRef.on("value", snap => userCount.innerText = snap.val()||0);
+onlineRef.on("value", snap => { onlineVal.innerText = snap.numChildren() || 0; });
+downloadRef.on("value", snap => downloadCount.innerText = snap.val()||0);
 </script>
 </body>
 </html>
