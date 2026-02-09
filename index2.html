@@ -339,6 +339,18 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+// ===== USER SESSION ID (ANONIM) =====
+const sessionId = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2,6);
+// ===== TRACK VISITOR MASUK WEB =====
+const visitorRef = db.ref("admin/visitors").child(sessionId);
+
+visitorRef.set({
+  masuk: Date.now(),
+  userAgent: navigator.userAgent
+});
+
+// auto hapus saat keluar
+visitorRef.onDisconnect().remove();
 
 // 2️⃣ Ambil elemen HTML (Hanya 1x deklarasi)
 const serverStatusEl = document.getElementById("serverStatus");
@@ -362,21 +374,6 @@ const app = document.getElementById("app");
 const opening = document.getElementById("opening");
 
 const btn = document.getElementById("btn");
-// === ADMIN CONTROL: ENABLE / DISABLE DOWNLOAD ===
-const downloadEnabledRef = db.ref("admin/settings/download_enabled");
-
-downloadEnabledRef.on("value", snap => {
-  const enabled = snap.val();
-
-  if (enabled === false) {
-    btn.disabled = true;
-    btn.innerText = "DOWNLOAD DIMATIKAN";
-  } else {
-    btn.disabled = false;
-    btn.innerText = "KLIK";
-  }
-});
-
 
 // 3️⃣ Realtime Stats Firebase
 const userRef = db.ref("stats/users");
@@ -434,15 +431,28 @@ async function getVideo() {
         titleEl.innerText = j.data.title || "TikTok Video";
 
         dl.onclick = function (e) {
-            e.preventDefault();
-            if (serverStatusEl.classList.contains("red")) {
-                alert("SERVER SEDANG ERROR, COBA LAGI NANTI");
-                return false;
-            }
-            downloadRef.transaction(n => (n || 0) + 1);
-            setTimeout(() => window.open(finalLink, "_blank"), 50);
-            return false;
-        };
+    e.preventDefault();
+    if (serverStatusEl.classList.contains("red")) {
+        alert("SERVER SEDANG ERROR, COBA LAGI NANTI");
+        return false;
+    }
+
+    // Hitung total download
+    downloadRef.transaction(n => (n || 0) + 1);
+
+    // LOG DOWNLOAD DETAIL (ADMIN ONLY)
+    db.ref("admin/download_logs").push({
+        user: sessionId,
+        video: finalLink,
+        format: format,
+        quality: quality,
+        title: titleEl.innerText,
+        time: Date.now()
+    });
+
+    setTimeout(() => window.open(finalLink, "_blank"), 50);
+    return false;
+};
 
         result.style.display = "block";
         btn.innerText = "SELESAI";
@@ -544,4 +554,4 @@ onlineRef.on("value", snap => { onlineVal.innerText = snap.numChildren() || 0; }
 downloadRef.on("value", snap => downloadCount.innerText = snap.val()||0);
 </script>
 </body>
- </html>
+</html>
